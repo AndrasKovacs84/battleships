@@ -265,7 +265,6 @@ def winStateCheck():
         print("Game over,", player1Name, "wins!")
         return True
 
-<<<<<<< HEAD
 
 def shipSunkCheck(shipList, whoseShip):  # whoseShip true for p1, false for p2
     shipDamage = 0
@@ -280,21 +279,6 @@ def shipSunkCheck(shipList, whoseShip):  # whoseShip true for p1, false for p2
             if shipDamage == len(shipList):
                 for j in range(0, len(shipList)):
                     player1Board[shipList[j][0]][shipList[j][1]] = "+"
-=======
-def shipSunkCheck(shipList, whoseShip): #whoseShip true for p1, false for p2
-    shipDamage=0
-    for i in range(0, len(shipList)): #check each set of coords the ship has e.g.: each [x,y]
-        if whoseShip and player1Board[shipList[i][0]][shipList[i][1]]=="O":
-            shipDamage+=1
-            if shipDamage==len(shipList):
-                for j in range(0,len(shipList)):
-                    player1Board[shipList[j][0]][shipList[j][1]]="+"
-        if whoseShip is False and player2Board[shipList[i][0]][shipList[i][1]]=="O":
-            shipDamage+=1
-            if shipDamage==len(shipList):
-                for j in range(0,len(shipList)):
-                    player2Board[shipList[j][0]][shipList[j][1]]="+"
->>>>>>> b539b7c33ea96585645c3cb33d72d9d24324dbaa
 
 
 while True:
