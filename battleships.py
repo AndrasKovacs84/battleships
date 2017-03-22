@@ -100,7 +100,7 @@ def input_and_check():  # input_and_check
     return coord
 
 
-def showBoard(player1Board, player2Board, whoseTurn):
+def showBoard(player1Board, player2Board, whoseTurn):  # show_board
     currentPlayerBoard = []
     enemyPlayerBoard = []
     currentPlayerName = ""
