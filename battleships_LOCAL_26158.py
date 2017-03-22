@@ -4,28 +4,6 @@ import os
 import sys
 
 
-def AI_pick_shooting_coordinate():
-    '''
-    coord = []
-    first_hit = []
-    second_hit = []
-    acceptable_target_coords = []
-    if first_hit == []:
-        # if there are no hits yet, then just shoot at a random coordinate.
-        x, y = random.randrange(0, 9)
-        coord.append(x, y)
-
-    elif first_hit != [] and second_hit == []:
-        # first hit is not empty, but we have no second_hit yet, pick a coord near first_hit
-        acceptable_target_coords.append(first hit[0]-1, first_hit[1])
-        acceptable_target_coords.append(first hit[0]+1, first_hit[1])
-        acceptable_target_coords.append(first hit[0], first_hit[1]-1)
-        acceptable_target_coords.append(first hit[0], first_hit[1]+1)
-        for x, y in acceptable_target_coords:
-            if x, y < 0 or x, y > 9:
-    '''         
-
-
 def menuKeys(key):
     pass
 ''' if key == "q":
@@ -265,7 +243,6 @@ def winStateCheck():
         print("Game over,", player1Name, "wins!")
         return True
 
-<<<<<<< HEAD
 
 def shipSunkCheck(shipList, whoseShip):  # whoseShip true for p1, false for p2
     shipDamage = 0
@@ -280,21 +257,6 @@ def shipSunkCheck(shipList, whoseShip):  # whoseShip true for p1, false for p2
             if shipDamage == len(shipList):
                 for j in range(0, len(shipList)):
                     player1Board[shipList[j][0]][shipList[j][1]] = "+"
-=======
-def shipSunkCheck(shipList, whoseShip): #whoseShip true for p1, false for p2
-    shipDamage=0
-    for i in range(0, len(shipList)): #check each set of coords the ship has e.g.: each [x,y]
-        if whoseShip and player1Board[shipList[i][0]][shipList[i][1]]=="O":
-            shipDamage+=1
-            if shipDamage==len(shipList):
-                for j in range(0,len(shipList)):
-                    player1Board[shipList[j][0]][shipList[j][1]]="+"
-        if whoseShip is False and player2Board[shipList[i][0]][shipList[i][1]]=="O":
-            shipDamage+=1
-            if shipDamage==len(shipList):
-                for j in range(0,len(shipList)):
-                    player2Board[shipList[j][0]][shipList[j][1]]="+"
->>>>>>> b539b7c33ea96585645c3cb33d72d9d24324dbaa
 
 
 while True:
