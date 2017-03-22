@@ -23,10 +23,10 @@ def AI_pick_shooting_coordinate():
         acceptable_target_coords.append(first hit[0], first_hit[1]+1)
         for x, y in acceptable_target_coords:
             if x, y < 0 or x, y > 9:
-    '''
+    '''         
 
 
-def menuKeys(key):  # menukeys
+def menu_keys(key): # menukeys
     pass
 ''' if key == "q":
         sys.exit(0)
