@@ -2,6 +2,9 @@
 import random
 import os
 import sys
+import string
+
+print(sys.version)
 
 
 def AI_pick_shooting_coordinate():
@@ -26,73 +29,77 @@ def AI_pick_shooting_coordinate():
     '''
 
 
-def menu_keys(key):  # menukeys
-    pass
-''' if key == "q":
+def menu_keys(key):                         # handles user input for starting a new game or quitting
+    if key == "q":
         sys.exit(0)
     elif key == "n":
-        return False  # You can't return break!!!
-'''
+        init()  # You can't return break!!!
 
 
 def init():
-    global player1Turn
-    global player1Name
-    player1Name = input("Player 1's name: ")
-    global player2Name
-    player2Name = input("Player 2's name: ")
-    global currentEvent
-    currentEvent = ""
-    global player1Board
-    player1Board = []
-    global player2Board
-    player2Board = []
-    global player1Ship5
-    player1Ship5 = []
-    global player1Ship4
-    player1Ship4 = []
-    global player1Ship3
-    player1Ship3 = []
-    global player2Ship5
-    player2Ship5 = []
-    global player2Ship4
-    player2Ship4 = []
-    global player2Ship3
-    player2Ship3 = []
+    os.system('clear')                              # inicialize the global variables of the game
+    global player1_turn
+    global player1_name
+
+    global player2_name
+
+    global current_event
+    current_event = ""
+    global player1_board
+    player1_board = []
+    global player2_board
+    player2_board = []
+    global player1_ship5
+    player1_ship5 = []
+    global player1_ship4
+    player1_ship4 = []
+    global player1_ship3
+    player1_ship3 = []
+    global player2_ship5
+    player2_ship5 = []
+    global player2_ship4
+    player2_ship4 = []
+    global player2_ship3
+    player2_ship3 = []
     global coord
     coord = []
     for i in range(0, 10):
-        player1Board.append(["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"])
-    for i in range(0, 10):
-        player2Board.append(["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"])
+        player1_board.append(["~"] * 10)    # fill up playerboards with tildes "~"
+    for i in range(0, 10):                  #
+        player2_board.append(["~"] * 10)    #
+    player1_turn = True
+    player1_name = input("Player 1's name: ")
+    player2_name = input("Player 2's name: ")
+    player1_turn = True  # by default player1 starts the game
 
 
-def input_and_check():  # input_and_check
+def input_and_check():      # checks validity of user input
 
-    x = ""
+    x = ""  # checks if user input is a valid letter
     y = ""
-    validCharList = "abcdefghij"
+    valid_char_list = "bacdefghij"
     coord = []
     while True:
         x = input("input x coordinate (A-J): ")
         x = x.lower()
-        menuKeys(x)
-        if x in validCharList:
-            x = validCharList.index(x)
+        menu_keys(x)
+        if x in valid_char_list:
+            x = valid_char_list.index(x)
             break
         else:
             print("invalid coordinate, x needs to be a letter between (A-J): ")
             continue
-    while True:
+    while True:  # checks if user input is a valid number
         y = input("input y coordinate (1-10): ")
-        menuKeys(y)
-        try:
+        menu_keys(y)
+        if y.isdigit():
             y = int(y) - 1
-            if y < 0 or y > 9:
-                raise ValueError
-            else:
+            if y >= 0 and y <= 9:
                 break
-        except ValueError:
+            else:
+                print("invalid coordinate, y needs to be a number between (1-10): ")
+            continue
+        else:
             print("invalid coordinate, y needs to be a number between (1-10): ")
             continue
     coord.append(y)
@@ -100,37 +107,36 @@ def input_and_check():  # input_and_check
     return coord
 
 
-def show_board(player1Board, player2Board, whoseTurn):
-
-    currentPlayerBoard = []
-    enemyPlayerBoard = []
-    currentPlayerName = ""
-    currentLine = ""
-    if whoseTurn:
-        currentPlayerName = player1Name
-        currentPlayerBoard = player1Board
-        enemyPlayerBoard = player2Board
+def show_board(player1_board, player2_board, whose_turn):   # shows the player boards
+    current_player_board = []
+    enemy_player_board = []
+    current_player_name = ""
+    current_line = ""
+    if whose_turn:                                    # checks whose turn is the game at in accordance with "whose_turn"
+        current_player_name = player1_name
+        current_player_board = player1_board
+        enemy_player_board = player2_board
     else:
-        currentPlayerName = player2Name
-        currentPlayerBoard = player2Board
-        enemyPlayerBoard = player1Board
+        current_player_name = player2_name
+        current_player_board = player2_board
+        enemy_player_board = player1_board
 
     # "clear" the screen and print a header
     os.system('clear')
-    print(currentPlayerName + "'s turn")
+    print(current_player_name + "'s turn")
     print("=================================================", "\n")
     print("   Player's ships             Previous shots")
     print("   A B C D E F G H I J        A B C D E F G H I J")
 
     for i in range(0, 10):
-        currentLine = ""
+        current_line = ""
         # print the player board on the left
         if i < 9:
             print(i + 1, sep=" ", end="  ")
         else:
             print(i + 1, sep=" ", end=" ")
         for j in range(0, 10):
-            print(currentPlayerBoard[i][j], sep=" ", end=" ", flush=True)
+            print(current_player_board[i][j], sep=" ", end=" ", flush=True)
 
         # add spacing between the two boards
         print("   ", sep=" ", end=" ")
@@ -141,184 +147,184 @@ def show_board(player1Board, player2Board, whoseTurn):
         else:
             print(i + 1, sep=" ", end=" ")
         for j in range(0, 10):
-            currentLine = currentLine + str(enemyPlayerBoard[i][j]) + " "
-        print(currentLine.replace("S", "~"))
+            current_line = current_line + str(enemy_player_board[i][j]) + " "
+        print(current_line.replace("S", "~"))
         # the following seems to be needed to print in the following line... ("\n" skips a line)
 
 
-def shot(whoseTurn):
-    global player1Board
-    global player2Board
+def shot(whose_turn):
+    global player1_board
+    global player2_board
     shot = []
 
     while True:
-        shot = inputAndCheck()
+        shot = input_and_check()
         shotX = int(shot[0])
         shotY = int(shot[1])
 
-        if whoseTurn and player2Board[shotX][shotY] == "S":
-            player2Board[shotX][shotY] = "O"
+        if whose_turn and player2_board[shotX][shotY] == "S":
+            player2_board[shotX][shotY] = "O"
             break
-        elif whoseTurn and player2Board[shotX][shotY] == "~":
-            player2Board[shotX][shotY] = "X"
+        elif whose_turn and player2_board[shotX][shotY] == "~":
+            player2_board[shotX][shotY] = "X"
             break
-        elif whoseTurn and player2Board[shotX][shotY] == "X" or player2Board[shotX][shotY] == "O":
+        elif whose_turn and player2_board[shotX][shotY] == "X" or player2_board[shotX][shotY] == "O":
             print("coordinate already shot, choose another one!")
             continue
 
-        if whoseTurn is False and player1Board[shotX][shotY] == "S":
-            player1Board[shotX][shotY] = "O"
+        if whose_turn is False and player1_board[shotX][shotY] == "S":
+            player1_board[shotX][shotY] = "O"
             break
-        elif whoseTurn is False and player1Board[shotX][shotY] == "~":
-            player1Board[shotX][shotY] = "X"
+        elif whose_turn is False and player1_board[shotX][shotY] == "~":
+            player1_board[shotX][shotY] = "X"
             break
-        elif whoseTurn is False and player1Board[shotX][shotY] == "X" or player1Board[shotX][shotY] == "O":
+        elif whose_turn is False and player1_board[shotX][shotY] == "X" or player1_board[shotX][shotY] == "O":
             print("coordinate already shot, choose another one!")
             continue
 
 
-def setShip(length):
-    shipList = []
+def set_ship(length):
+    ship_list = []
     while True:
         print("Please input starting coordinates for a", length, "long ship.")
-        firstPos = inputAndCheck()  # e.g.: [1,1]
+        first_pos = input_and_check()  # e.g.: [1,1]
         print("Please input ending coordinates for a", length, "long ship.")
-        lastPos = inputAndCheck()  # e.g.: [1,5]
+        last_pos = input_and_check()  # e.g.: [1,5]
         # input ship coordinate and check if valid (either x or y of the beginning
         # and end must match and their distance can't be more than the ship's
         # length)
         while True:
-            if firstPos[0] == lastPos[0]:  # Check if y coords are the same
-                if firstPos[1] > lastPos[1]:  # set which x coord is smaller
-                    smallerValue = lastPos[1]
-                    for i in range(0, abs(firstPos[1] - lastPos[1]) + 1):
-                        shipList.append([firstPos[0], smallerValue + i])
-                elif firstPos[1] < lastPos[1]:
-                    smallerValue = firstPos[1]
-                    for i in range(0, abs(firstPos[1] - lastPos[1]) + 1):
-                        shipList.append([firstPos[0], smallerValue + i])
+            if first_pos[0] == last_pos[0]:  # Check if y coords are the same
+                if first_pos[1] > last_pos[1]:  # set which x coord is smaller
+                    smaller_value = last_pos[1]
+                    for i in range(0, abs(first_pos[1] - last_pos[1]) + 1):
+                        ship_list.append([first_pos[0], smaller_value + i])
+                elif first_pos[1] < last_pos[1]:
+                    smaller_value = first_pos[1]
+                    for i in range(0, abs(first_pos[1] - last_pos[1]) + 1):
+                        ship_list.append([first_pos[0], smaller_value + i])
                 break
 
-            elif firstPos[1] == lastPos[1]:  # same as above only the other way around.
-                if firstPos[0] > lastPos[0]:
-                    smallerValue = lastPos[0]
-                    for i in range(0, abs(firstPos[0] - lastPos[0]) + 1):
-                        shipList.append([smallerValue + i, firstPos[1]])
-                elif firstPos[0] < lastPos[0]:
-                    smallerValue = firstPos[0]
-                    for i in range(0, abs(firstPos[0] - lastPos[0]) + 1):
-                        shipList.append([smallerValue + i, firstPos[1]])
+            elif first_pos[1] == last_pos[1]:  # same as above only the other way around.
+                if first_pos[0] > last_pos[0]:
+                    smaller_value = last_pos[0]
+                    for i in range(0, abs(first_pos[0] - last_pos[0]) + 1):
+                        ship_list.append([smaller_value + i, first_pos[1]])
+                elif first_pos[0] < last_pos[0]:
+                    smaller_value = first_pos[0]
+                    for i in range(0, abs(first_pos[0] - last_pos[0]) + 1):
+                        ship_list.append([smaller_value + i, first_pos[1]])
                 break
             else:
                 print("Invalid coordinates!")
-                shipList = []
+                ship_list = []
                 continue
 
-        if int(len(shipList)) != length:
+        if int(len(ship_list)) != length:
             print("Invalid coordinates!")
-            shipList = []
+            ship_list = []
             continue
 
-        if player1Turn:
+        if player1_turn:
             for i in range(0, length):
-                if player1Board[shipList[i][0]][shipList[i][1]] == "S":
-                    shipList = []
+                if player1_board[ship_list[i][0]][ship_list[i][1]] == "S":
+                    ship_list = []
                     print("Ship obstructed, try placing elsewhere")
                     break
-            if shipList == []:
+            if ship_list == []:
                 continue
             else:
                 break
 
-        elif not player1Turn:
+        elif not player1_turn:
             for i in range(0, length):
-                if player2Board[shipList[i][0]][shipList[i][1]] == "S":
-                    shipList = []
+                if player2_board[ship_list[i][0]][ship_list[i][1]] == "S":
+                    ship_list = []
                     print("Ship obstructed, try placing elsewhere")
                     break
-            if shipList == []:
+            if ship_list == []:
                 continue
             else:
                 break
 
-    if player1Turn:
+    if player1_turn:
         for i in range(0, length):
-            player1Board[shipList[i][0]][shipList[i][1]] = "S"
+            player1_board[ship_list[i][0]][ship_list[i][1]] = "S"
     else:
         for i in range(0, length):
-            player2Board[shipList[i][0]][shipList[i][1]] = "S"
+            player2_board[ship_list[i][0]][ship_list[i][1]] = "S"
 
-    return shipList
+    return ship_list
 
 
-def winStateCheck():
-    p1Ships = 0
-    p2Ships = 0
+def win_state_check():
+    p1_ships = 0
+    p2_ships = 0
     for i in range(0, 10):
         for j in range(0, 10):
-            if player2Board[i][j] == "S":
-                p1Ships += 1
-            if player1Board[i][j] == "S":
-                p2Ships += 1
-    if p1Ships == 0:
-        print("Game over,", player2Name, "wins!")
+            if player2_board[i][j] == "S":
+                p1_ships += 1
+            if player1_board[i][j] == "S":
+                p2_ships += 1
+    if p1_ships == 0:
+        print("Game over,", player2_name, "wins!")
         return True
-    if p2Ships == 0:
-        print("Game over,", player1Name, "wins!")
+    if p2_ships == 0:
+        print("Game over,", player1_name, "wins!")
         return True
 
 
-def shipSunkCheck(shipList, whoseShip):  # whoseShip true for p1, false for p2
-    shipDamage = 0
-    for i in range(0, len(shipList)):  # check each set of coords the ship has e.g.: each [x,y]
-        if whoseShip and player1Board[shipList[i][0]][shipList[i][1]] == "O":
-            shipDamage += 1
-            if shipDamage == len(shipList):
-                for j in range(0, len(shipList)):
-                    player1Board[shipList[j][0]][shipList[j][1]] = "+"
-        if whoseShip is False and player2Board[shipList[i][0]][shipList[i][1]] == "O":
-            shipDamage += 1
-            if shipDamage == len(shipList):
-                for j in range(0, len(shipList)):
-                    player1Board[shipList[j][0]][shipList[j][1]] = "+"
+def ship_sunk_check(ship_list, whose_ship):  # whose_ship true for p1, false for p2
+    ship_damage = 0
+    for i in range(0, len(ship_list)):  # check each set of coords the ship has e.g.: each [x,y]
+        if whose_ship and player1_board[ship_list[i][0]][ship_list[i][1]] == "O":
+            ship_damage += 1
+            if ship_damage == len(ship_list):
+                for j in range(0, len(ship_list)):
+                    player1_board[ship_list[j][0]][ship_list[j][1]] = "+"
+        if whose_ship is False and player2_board[ship_list[i][0]][ship_list[i][1]] == "O":
+            ship_damage += 1
+            if ship_damage == len(ship_list):
+                for j in range(0, len(ship_list)):
+                    player1_board[ship_list[j][0]][ship_list[j][1]] = "+"
 
 
 while True:
     init()
-    player1Turn = True
-    showBoard(player1Board, player2Board, player1Turn)
-    print("Press any key to start deploying ships for", player1Name)
-    player1Ship3 = setShip(3)
-    showBoard(player1Board, player2Board, player1Turn)
-    player1Ship4 = setShip(4)
-    showBoard(player1Board, player2Board, player1Turn)
-    player1Ship5 = setShip(5)
-    showBoard(player1Board, player2Board, player1Turn)
+
+    show_board(player1_board, player2_board, player1_turn)
+    print("Press any key to start deploying ships for", player1_name)
+    player1_ship3 = set_ship(3)
+    show_board(player1_board, player2_board, player1_turn)
+    player1_ship4 = set_ship(4)
+    show_board(player1_board, player2_board, player1_turn)
+    player1_ship5 = set_ship(5)
+    show_board(player1_board, player2_board, player1_turn)
     input("Ships deployed, press any key to deploy for next player...")
-    player1Turn = False
-    showBoard(player1Board, player2Board, player1Turn)
-    print("Press any key to start deploying ships for", player2Name)
-    player2Ship3 = setShip(3)
-    showBoard(player1Board, player2Board, player1Turn)
-    player2Ship4 = setShip(4)
-    showBoard(player1Board, player2Board, player1Turn)
-    player2Ship5 = setShip(5)
-    showBoard(player1Board, player2Board, player1Turn)
-    player1Turn = random.choice((True, False))
+    player1_turn = False
+    show_board(player1_board, player2_board, player1_turn)
+    print("Press any key to start deploying ships for", player2_name)
+    player2_ship3 = set_ship(3)
+    show_board(player1_board, player2_board, player1_turn)
+    player2_ship4 = set_ship(4)
+    show_board(player1_board, player2_board, player1_turn)
+    player2_ship5 = set_ship(5)
+    show_board(player1_board, player2_board, player1_turn)
+    player1_turn = random.choice((True, False))
     input("All ships deployed, press a key to start. Random player goes first.")
     while True:
-        showBoard(player1Board, player2Board, player1Turn)
-        shot(player1Turn)
-        shipSunkCheck(player1Ship3, player1Turn)
-        shipSunkCheck(player1Ship4, player1Turn)
-        shipSunkCheck(player1Ship5, player1Turn)
-        shipSunkCheck(player2Ship3, player1Turn)
-        shipSunkCheck(player2Ship4, player1Turn)
-        shipSunkCheck(player2Ship5, player1Turn)
-        showBoard(player1Board, player2Board, player1Turn)
-        if winStateCheck():
+        show_board(player1_board, player2_board, player1_turn)
+        shot(player1_turn)
+        ship_sunk_check(player1_ship3, player1_turn)
+        ship_sunk_check(player1_ship4, player1_turn)
+        ship_sunk_check(player1_ship5, player1_turn)
+        ship_sunk_check(player2_ship3, player1_turn)
+        ship_sunk_check(player2_ship4, player1_turn)
+        ship_sunk_check(player2_ship5, player1_turn)
+        show_board(player1_board, player2_board, player1_turn)
+        if win_state_check():
             input("Press any key to start a new game")
             break
-        # winStateCheck(player1Turn)
+        # win_state_check(player1_turn)
         input("Press any key to continue...")
-        player1Turn = not player1Turn
+        player1_turn = not player1_turn
