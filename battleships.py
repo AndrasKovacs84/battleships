@@ -67,7 +67,7 @@ def init():
         player2Board.append(["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"])
 
 
-def inputAndCheck():
+def input_and_check():
     x = ""
     y = ""
     validCharList = "abcdefghij"
