@@ -5,7 +5,6 @@ import sys
 
 
 def AI_pick_shooting_coordinate():
-    '''
     coord = []
     first_hit = []
     second_hit = []
@@ -23,7 +22,6 @@ def AI_pick_shooting_coordinate():
         acceptable_target_coords.append(first hit[0], first_hit[1]+1)
         for x, y in acceptable_target_coords:
             if x, y < 0 or x, y > 9:
-    '''
 
 
 def menu_keys(key):  # menukeys
