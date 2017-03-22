@@ -4,6 +4,28 @@ import os
 import sys
 
 
+def AI_pick_shooting_coordinate():
+    '''
+    coord = []
+    first_hit = []
+    second_hit = []
+    acceptable_target_coords = []
+    if first_hit == []:
+        # if there are no hits yet, then just shoot at a random coordinate.
+        x, y = random.randrange(0, 9)
+        coord.append(x, y)
+
+    elif first_hit != [] and second_hit == []:
+        # first hit is not empty, but we have no second_hit yet, pick a coord near first_hit
+        acceptable_target_coords.append(first hit[0]-1, first_hit[1])
+        acceptable_target_coords.append(first hit[0]+1, first_hit[1])
+        acceptable_target_coords.append(first hit[0], first_hit[1]-1)
+        acceptable_target_coords.append(first hit[0], first_hit[1]+1)
+        for x, y in acceptable_target_coords:
+            if x, y < 0 or x, y > 9:
+    '''         
+
+
 def menuKeys(key):
     pass
 ''' if key == "q":
@@ -245,7 +267,7 @@ def shipSunkCheck(shipList, whoseShip): #whoseShip true for p1, false for p2
             shipDamage+=1
             if shipDamage==len(shipList):
                 for j in range(0,len(shipList)):
-                    player1Board[shipList[j][0]][shipList[j][1]]="+"
+                    player2Board[shipList[j][0]][shipList[j][1]]="+"
 
 
 while True:
