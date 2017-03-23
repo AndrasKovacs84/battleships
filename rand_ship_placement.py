@@ -9,7 +9,7 @@ import itertools
 def rand_ship_factory(length):
     global invalid_coords
     invalid_coords = []
-    AI_ship = []
+    random_ship = []
 
     all_coords = list(range(0, 10))  # contains possible values for X and Y coordinates
     coords1 = []
@@ -32,23 +32,23 @@ def rand_ship_factory(length):
     print(coords2)
 
     # randomly decides whether coords1 or coords2 represents the horizontal coordinates on the gameboard
-    # "AI_ship" will be filled up with coordinates
+    # "random_ship" will be filled up with coordinates
     if random.choice((True, False)):
         for i in range(length):
-            AI_ship.append([coords1[0][i], coords2[i]])
+            random_ship.append([coords1[0][i], coords2[i]])
     else:
         for i in range(length):
-            AI_ship.append([coords2[i], coords1[0][i]])
+            random_ship.append([coords2[i], coords1[0][i]])
 
-    print(AI_ship)             # "AI_ship is ready and joins to the AI_ship list"
+    # print(random_ship)             # "random_ship is ready and joins to the random_ship list"
 
-    # return AI_ship
+    # return random_ship
 
-    for i in AI_ship:
+    for i in random_ship:
         invalid_coords.append(i)
     print(invalid_coords)
 
-    for i in AI_ship:
+    for i in random_ship:
         invalid_coords.append([(i[0] - 1), i[1]])
         invalid_coords.append([(i[0] + 1), i[1]])
         invalid_coords.append([i[0], (i[1] - 1)])
@@ -58,9 +58,9 @@ def rand_ship_factory(length):
         invalid_coords.append([(i[0] - 1), (i[1] + 1)])
         invalid_coords.append([(i[0] + 1), (i[1] - 1)])
 
-        # invalid_coords.append([(AI_ship[0][0] - 1), AI_ship[0][1]])
+        # invalid_coords.append([(random_ship[0][0] - 1), random_ship[0][1]])
     invalid_coords.sort()
     invalid_coords = list(invalid_coords for invalid_coords, _ in itertools.groupby(invalid_coords))
     print(invalid_coords)
-
+    return random_ship
 rand_ship_factory(5)
