@@ -11,7 +11,9 @@ def init():
     global player1_turn
     player1_turn = random.choice((True, False))
     global player1_name
+    player1_name = ""
     global player2_name
+    player2_name = ""
     global current_event
     current_event = ""
     global new_game_switch
@@ -76,56 +78,55 @@ def init():
         chosen_option = input("enter option: ")
         os.system("clear")
         if chosen_option == "1":  # manual ship placement
-            for ship_length in range(3,6):  # 1 of each length of ships
+            for ship_length in range(3, 6):  # 1 of each length of ships
                 show_board(player1_board, player2_board, True)
                 player1_ship_list.append(set_ship(ship_length))
-        
+
         elif chosen_option == "2":  # random placement
-            for ship_length in range(3,6):
+            for ship_length in range(3, 6):
                 player1_ship_list.append(rand_ship_placement(ship_length))
-
-
 
     elif single_player is False:
         # initialize ships for player 1
-        player1_name = input("Player 1 name: ")
-        # player 1 goes first for ship deployment
-        os.system("clear")
-        print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
-              "Choose an option:", "\n",
-              "1 - manual ship placement", "\n",
-              "2 - random ship placement")
-        chosen_option = input("enter option: ")
-        os.system("clear")
+        while True:
+            if player1_name == "":
+                player1_name = input("Player 1 name: ")
+                # player 1 goes first for ship deployment
+                os.system("clear")
+                print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
+                      "Choose an option:", "\n",
+                      "1 - manual ship placement", "\n",
+                      "2 - random ship placement")
+                chosen_option = input("enter option: ")
+                os.system("clear")
+                if chosen_option == "1":  # manual ship placement
+                    for ship_length in range(3, 6):  # 1 of each length of ships
+                        show_board(player1_board, player2_board, True)
+                        player1_ship_list.append(set_ship(ship_length))
+                elif chosen_option == "2":  # random placement
+                    for ship_length in range(3, 6):
+                        player1_ship_list.append(rand_ship_placement(ship_length))
+                continue
+                # initialize ships for player 2
+            elif player2_name == "":
+                player2_name = input("Player 2 name: ")
+                # player 1 goes first for ship deployment
+                os.system("clear")
+                print("SHIP PLACEMENT FOR", player2_name.upper(), "\n",
+                      "Choose an option:", "\n",
+                      "1 - manual ship placement", "\n",
+                      "2 - random ship placement")
+                chosen_option = input("enter option: ")
+                os.system("clear")
 
-        if chosen_option == "1":  # manual ship placement
-            for ship_length in range(3,6):  # 1 of each length of ships
-                show_board(player1_board, player2_board, True)
-                player1_ship_list.append(set_ship(ship_length))
+                if chosen_option == "1":  # manual ship placement
+                    for ship_length in range(3, 6):  # 1 of each length of ships
+                        show_board(player1_board, player2_board, False)
+                        player2_ship_list.append(set_ship(ship_length))
 
-        elif chosen_option == "2":  # random placement
-            for ship_length in range(3,6):
-                player1_ship_list.append(rand_ship_placement(ship_length))
-
-        # initialize ships for player 2
-        player2_name = input("Player 2 name: ")
-        # player 1 goes first for ship deployment
-        os.system("clear")
-        print("SHIP PLACEMENT FOR", player2_name.upper(), "\n",
-              "Choose an option:", "\n",
-              "1 - manual ship placement", "\n",
-              "2 - random ship placement")
-        chosen_option = input("enter option: ")
-        os.system("clear")
-
-        if chosen_option == "1":  # manual ship placement
-            for ship_length in range(3,6):  # 1 of each length of ships
-                show_board(player1_board, player2_board, False)
-                player2_ship_list.append(set_ship(ship_length))
-
-        elif chosen_option == "2":  # random placement
-            for ship_length in range(3,6):
-                player2_ship_list.append(rand_ship_placement(ship_length))
+                elif chosen_option == "2":  # random placement
+                    for ship_length in range(3, 6):
+                        player2_ship_list.append(rand_ship_placement(ship_length))
 
 
 def rand_ship_placement(length):
@@ -172,6 +173,13 @@ def rand_ship_placement(length):
 
     invalid_coords.sort()
     invalid_coords = list(invalid_coords for invalid_coords, _ in itertools.groupby(invalid_coords))
+
+    for coord_pair in random_ship:
+        if player1_turn is True:
+            player1_board[coord_pair[0]][coord_pair[1]] = "S"
+        else:
+            player2_board[coord_pair[0]][coord_pair[1]] = "S"
+
     return random_ship
 
 
