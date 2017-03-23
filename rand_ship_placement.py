@@ -15,21 +15,16 @@ def rand_ship_factory(length):
     coords1 = []
     coords2 = []
 
-    # starts to generate the 3 long ship
+    # starts to generate the length long ship
 
     slice_start = random.randrange(0, len(all_coords) - (length - 1))  # set the start of slicing
     slice_end = slice_start + length                             # set the end of slicing
     coords1.append(all_coords[slice_start:slice_end])       # slices a 3 long piece of list from "all_coords"
 
-    # generate a random sequence with 3 neighbouring numbers between 0 and 10
+    # generate a random sequence with length nr of neighbouring numbers between 0 and 10
     rand_num = random.randrange(0, 10)
     for i in range(length):
         coords2.append(rand_num)
-
-    print(slice_start)
-    print(slice_end)
-    print(coords1)
-    print(coords2)
 
     # randomly decides whether coords1 or coords2 represents the horizontal coordinates on the gameboard
     # "random_ship" will be filled up with coordinates
@@ -40,13 +35,8 @@ def rand_ship_factory(length):
         for i in range(length):
             random_ship.append([coords2[i], coords1[0][i]])
 
-    # print(random_ship)             # "random_ship is ready and joins to the random_ship list"
-
-    # return random_ship
-
     for i in random_ship:
         invalid_coords.append(i)
-    print(invalid_coords)
 
     for i in random_ship:
         invalid_coords.append([(i[0] - 1), i[1]])
@@ -58,9 +48,7 @@ def rand_ship_factory(length):
         invalid_coords.append([(i[0] - 1), (i[1] + 1)])
         invalid_coords.append([(i[0] + 1), (i[1] - 1)])
 
-        # invalid_coords.append([(random_ship[0][0] - 1), random_ship[0][1]])
     invalid_coords.sort()
     invalid_coords = list(invalid_coords for invalid_coords, _ in itertools.groupby(invalid_coords))
-    print(invalid_coords)
     return random_ship
-rand_ship_factory(5)
+

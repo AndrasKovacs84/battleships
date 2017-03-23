@@ -3,8 +3,54 @@ import random
 import os
 import sys
 import string
+import itertools
 
-print(sys.version)
+
+def rand_ship_factory(length):
+    global invalid_coords
+    invalid_coords = []
+    random_ship = []
+
+    all_coords = list(range(0, 10))  # contains possible values for X and Y coordinates
+    coords1 = []
+    coords2 = []
+
+    # starts to generate the length long ship
+
+    slice_start = random.randrange(0, len(all_coords) - (length - 1))  # set the start of slicing
+    slice_end = slice_start + length                             # set the end of slicing
+    coords1.append(all_coords[slice_start:slice_end])       # slices a 3 long piece of list from "all_coords"
+
+    # generate a random sequence with length nr of neighbouring numbers between 0 and 10
+    rand_num = random.randrange(0, 10)
+    for i in range(length):
+        coords2.append(rand_num)
+
+    # randomly decides whether coords1 or coords2 represents the horizontal coordinates on the gameboard
+    # "random_ship" will be filled up with coordinates
+    if random.choice((True, False)):
+        for i in range(length):
+            random_ship.append([coords1[0][i], coords2[i]])
+    else:
+        for i in range(length):
+            random_ship.append([coords2[i], coords1[0][i]])
+
+    for i in random_ship:
+        invalid_coords.append(i)
+
+    for i in random_ship:
+        invalid_coords.append([(i[0] - 1), i[1]])
+        invalid_coords.append([(i[0] + 1), i[1]])
+        invalid_coords.append([i[0], (i[1] - 1)])
+        invalid_coords.append([i[0], (i[1] + 1)])
+        invalid_coords.append([(i[0] - 1), (i[1] - 1)])
+        invalid_coords.append([(i[0] + 1), (i[1] + 1)])
+        invalid_coords.append([(i[0] - 1), (i[1] + 1)])
+        invalid_coords.append([(i[0] + 1), (i[1] - 1)])
+
+    invalid_coords.sort()
+    invalid_coords = list(invalid_coords for invalid_coords, _ in itertools.groupby(invalid_coords))
+    return random_ship
 
 
 def AI_pick_shooting_coordinate():
@@ -117,22 +163,24 @@ def AI_pick_shooting_coordinate():
             if player1_board[coord[0]][coord[1]] == "O":
                 second_hit = copy.deepcopy(coord)        
 
-                    
 
 def menu_keys(key):                         # handles user input for starting a new game or quitting
     if key == "q":
         sys.exit(0)
     elif key == "n":
-        init()  # You can't return break!!!
+        new_game_switch = True
 
 
 def init():
     os.system('clear')                              # initialize the global variables of the game
     global player1_turn
+    player1_turn = random.choice((True, False))
     global player1_name
     global player2_name
     global current_event
     current_event = ""
+    global new_game_switch
+    new_game_switch = False
     global player1_board
     player1_board = []
     global player2_board
@@ -151,6 +199,10 @@ def init():
     player2_ship3 = []
     global coord
     coord = []
+    global player1_ship_list
+    player1_ship_list =[]
+    global player2_ship_list
+    player2_ship_list =[]
     chosen_option = ""
     single_player = True
     for i in range(0, 10):
@@ -159,7 +211,7 @@ def init():
         player2_board.append(["~"] * 10)    #
 
     # Start deploying ships, deploy 1 by 1 or random?
-    
+
     while True:
 
         print("Choose an option:", "\n",
@@ -179,19 +231,65 @@ def init():
 
     if single_player is True:
         player1_name = input("Player 1's name: ")
-        player2_name = input("Player 2's name: ")
-        player1_turn = True  # player 1 goes first for ship deployment
+        # player 1 goes first for ship deployment
         os.system("clear")
         print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
               "Choose an option:", "\n",
               "1 - manual ship placement", "\n",
               "2 - random ship placement")
-              
         chosen_option = input("enter option: ")
         os.system("clear")
+        if chosen_option == "1":  # manual ship placement
+            for ship_length in range(3,6):  # 1 of each length of ships
+                show_board(player1_board, player2_board, True)
+                player1_ship_list.append(set_ship(ship_length))
+        
+        elif chosen_option == "2":  # random placement
+            for ship_length in range(3,6):
+                player1_ship_list.append(rand_ship_placement(ship_length))
+
+
+
     elif single_player is False:
-        player1_name = input("Player name: ")
-        player1_turn = True  # player 1 goes first for ship deployment
+        # initialize ships for player 1
+        player1_name = input("Player 1 name: ")
+        # player 1 goes first for ship deployment
+        os.system("clear")
+        print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
+              "Choose an option:", "\n",
+              "1 - manual ship placement", "\n",
+              "2 - random ship placement")
+        chosen_option = input("enter option: ")
+        os.system("clear")
+
+        if chosen_option == "1":  # manual ship placement
+            for ship_length in range(3,6):  # 1 of each length of ships
+                show_board(player1_board, player2_board, True)
+                player1_ship_list.append(set_ship(ship_length))
+
+        elif chosen_option == "2":  # random placement
+            for ship_length in range(3,6):
+                player1_ship_list.append(rand_ship_placement(ship_length))
+
+        # initialize ships for player 2
+        player2_name = input("Player 2 name: ")
+        # player 1 goes first for ship deployment
+        os.system("clear")
+        print("SHIP PLACEMENT FOR", player2_name.upper(), "\n",
+              "Choose an option:", "\n",
+              "1 - manual ship placement", "\n",
+              "2 - random ship placement")
+        chosen_option = input("enter option: ")
+        os.system("clear")
+
+        if chosen_option == "1":  # manual ship placement
+            for ship_length in range(3,6):  # 1 of each length of ships
+                show_board(player1_board, player2_board, False)
+                player2_ship_list.append(set_ship(ship_length))
+
+        elif chosen_option == "2":  # random placement
+            for ship_length in range(3,6):
+                player2_ship_list.append(rand_ship_placement(ship_length))
 
 
 def input_and_check():      # checks validity of user input
@@ -393,6 +491,8 @@ def win_state_check():
     if p2_ships == 0:
         print("Game over,", player1_name, "wins!")
         return True
+    else:
+        return False
 
 
 def ship_sunk_check(ship_list, whose_ship):  # whose_ship true for p1, false for p2
@@ -410,6 +510,50 @@ def ship_sunk_check(ship_list, whose_ship):  # whose_ship true for p1, false for
                     player1_board[ship_list[j][0]][ship_list[j][1]] = "+"
 
 
+def turn_sequence(single_player):
+    if single_player is True:
+        while True:
+            show_board(player1_board, player2_board, player1_turn)
+            if player1_turn is True:
+                shot(player1_turn)
+            else:
+                AI_pick_shooting_coordinate()
+            for ship in player1_ship_list:
+                ship_sunk_check(ship, player1_turn)
+            for ship in player2_ship_list:
+                ship_sunk_check(ship, player1_turn)
+            if win_state_check() is True:
+                break
+            else:
+                player1_turn = not player1_turn
+                continue
+
+    if single_player is False:
+        while True:
+            show_board(player1_board, player2_board, player1_turn)
+            shot(player1_turn)
+            for ship in player1_ship_list:
+                ship_sunk_check(ship, player1_turn)
+            for ship in player2_ship_list:
+                ship_sunk_check(ship, player1_turn)
+            if win_state_check() is True:
+                break
+            else:
+                player1_turn = not player1_turn
+                continue
+
+
+def main():
+    while True:
+        init()
+        turn_sequence(single_player)
+        '''
+        if new_game_switch is True:
+            continue
+        else:
+            sys.exit(0) 
+        '''
+'''
 while True:
     init()
 
@@ -449,3 +593,4 @@ while True:
         # win_state_check(player1_turn)
         input("Press any key to continue...")
         player1_turn = not player1_turn
+'''
