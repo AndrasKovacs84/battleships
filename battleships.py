@@ -127,12 +127,10 @@ def menu_keys(key):                         # handles user input for starting a 
 
 
 def init():
-    os.system('clear')                              # inicialize the global variables of the game
+    os.system('clear')                              # initialize the global variables of the game
     global player1_turn
     global player1_name
-
     global player2_name
-
     global current_event
     current_event = ""
     global player1_board
@@ -153,14 +151,47 @@ def init():
     player2_ship3 = []
     global coord
     coord = []
+    chosen_option = ""
+    single_player = True
     for i in range(0, 10):
         player1_board.append(["~"] * 10)    # fill up playerboards with tildes "~"
     for i in range(0, 10):                  #
         player2_board.append(["~"] * 10)    #
-    player1_turn = True
-    player1_name = input("Player 1's name: ")
-    player2_name = input("Player 2's name: ")
-    player1_turn = True  # by default player1 starts the game
+
+    # Start deploying ships, deploy 1 by 1 or random?
+    
+    while True:
+
+        print("Choose an option:", "\n",
+              "1 - play against another player", "\n",
+              "2 - play against AI")
+        chosen_option = input("enter option: ")
+        os.system("clear")
+        if chosen_option == "1":
+            single_player = True
+            break
+        elif chosen_option == "2":
+            single_player = False
+            break
+        else:
+            print("incorrect option, try again.")
+            continue
+
+    if single_player is True:
+        player1_name = input("Player 1's name: ")
+        player2_name = input("Player 2's name: ")
+        player1_turn = True  # player 1 goes first for ship deployment
+        os.system("clear")
+        print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
+              "Choose an option:", "\n",
+              "1 - manual ship placement", "\n",
+              "2 - random ship placement")
+              
+        chosen_option = input("enter option: ")
+        os.system("clear")
+    elif single_player is False:
+        player1_name = input("Player name: ")
+        player1_turn = True  # player 1 goes first for ship deployment
 
 
 def input_and_check():      # checks validity of user input
