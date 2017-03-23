@@ -4,10 +4,11 @@ import os
 import sys
 import string
 import itertools
+import copy
 
 
 def init():
-    os.system('clear')                              # initialize the global variables of the game
+    os.system('cls')                              # initialize the global variables of the game
     global player1_turn
     player1_turn = random.choice((True, False))
     global player1_name
@@ -22,20 +23,16 @@ def init():
     player1_board = []
     global player2_board
     player2_board = []
-    global player1_ship5
-    player1_ship5 = []
-    global player1_ship4
-    player1_ship4 = []
-    global player1_ship3
-    player1_ship3 = []
-    global player2_ship5
-    player2_ship5 = []
-    global player2_ship4
-    player2_ship4 = []
-    global player2_ship3
-    player2_ship3 = []
     global coord
     coord = []
+    global first_hit
+    first_hit = []
+    global second_hit
+    second_hit = []
+    global acceptable_target_coords
+    acceptable_target_coords = []
+    global invalid_coords
+    invalid_coords = []
     global player1_ship_list
     player1_ship_list = []
     global player2_ship_list
@@ -56,12 +53,12 @@ def init():
               "1 - play against another player", "\n",
               "2 - play against AI")
         chosen_option = input("enter option: ")
-        os.system("clear")
+        os.system("cls")
         if chosen_option == "1":
-            single_player = True
+            single_player = False
             break
         elif chosen_option == "2":
-            single_player = False
+            single_player = True
             break
         else:
             print("incorrect option, try again.")
@@ -70,21 +67,26 @@ def init():
     if single_player is True:
         player1_name = input("Player 1's name: ")
         # player 1 goes first for ship deployment
-        os.system("clear")
+        os.system("cls")
         print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
               "Choose an option:", "\n",
               "1 - manual ship placement", "\n",
               "2 - random ship placement")
         chosen_option = input("enter option: ")
-        os.system("clear")
+        os.system("cls")
         if chosen_option == "1":  # manual ship placement
             for ship_length in range(3, 6):  # 1 of each length of ships
                 show_board(player1_board, player2_board, True)
                 player1_ship_list.append(set_ship(ship_length))
 
         elif chosen_option == "2":  # random placement
+            for i in range(0, 2):
+                for ship_length in range(3, 6):
+                    player1_ship_list.append(rand_ship_placement(ship_length, True))
+            invalid_coords = []
+        for i in range(0, 2):
             for ship_length in range(3, 6):
-                player1_ship_list.append(rand_ship_placement(ship_length))
+                    player2_ship_list.append(rand_ship_placement(ship_length, False))
 
     elif single_player is False:
         # initialize ships for player 1
@@ -92,32 +94,32 @@ def init():
             if player1_name == "":
                 player1_name = input("Player 1 name: ")
                 # player 1 goes first for ship deployment
-                os.system("clear")
+                os.system("cls")
                 print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
                       "Choose an option:", "\n",
                       "1 - manual ship placement", "\n",
                       "2 - random ship placement")
                 chosen_option = input("enter option: ")
-                os.system("clear")
+                os.system("cls")
                 if chosen_option == "1":  # manual ship placement
                     for ship_length in range(3, 6):  # 1 of each length of ships
                         show_board(player1_board, player2_board, True)
                         player1_ship_list.append(set_ship(ship_length))
                 elif chosen_option == "2":  # random placement
                     for ship_length in range(3, 6):
-                        player1_ship_list.append(rand_ship_placement(ship_length))
+                        player1_ship_list.append(rand_ship_placement(ship_length, True))
                 continue
                 # initialize ships for player 2
             elif player2_name == "":
                 player2_name = input("Player 2 name: ")
                 # player 1 goes first for ship deployment
-                os.system("clear")
+                os.system("cls")
                 print("SHIP PLACEMENT FOR", player2_name.upper(), "\n",
                       "Choose an option:", "\n",
                       "1 - manual ship placement", "\n",
                       "2 - random ship placement")
                 chosen_option = input("enter option: ")
-                os.system("clear")
+                os.system("cls")
 
                 if chosen_option == "1":  # manual ship placement
                     for ship_length in range(3, 6):  # 1 of each length of ships
@@ -126,38 +128,49 @@ def init():
 
                 elif chosen_option == "2":  # random placement
                     for ship_length in range(3, 6):
-                        player2_ship_list.append(rand_ship_placement(ship_length))
+                        player2_ship_list.append(rand_ship_placement(ship_length, False))
+            break
 
 
-def rand_ship_placement(length):
+def rand_ship_placement(length, whose_turn):
     global invalid_coords
-    invalid_coords = []
-    random_ship = []
+    global player1_board
+    global player2_board
 
     all_coords = list(range(0, 10))  # contains possible values for X and Y coordinates
     coords1 = []
     coords2 = []
 
     # starts to generate the length long ship
+    while True:
+        random_ship = []
+        coords1 = []
+        coords2 = []
 
-    slice_start = random.randrange(0, len(all_coords) - (length - 1))  # set the start of slicing
-    slice_end = slice_start + length                             # set the end of slicing
-    coords1.append(all_coords[slice_start:slice_end])       # slices a 3 long piece of list from "all_coords"
+        slice_start = random.randrange(0, len(all_coords) - (length - 1))  # set the start of slicing
+        slice_end = slice_start + length                             # set the end of slicing
+        coords1.append(all_coords[slice_start:slice_end])       # slices a 3 long piece of list from "all_coords"
 
-    # generate a random sequence with length nr of neighbouring numbers between 0 and 10
-    rand_num = random.randrange(0, 10)
-    for i in range(length):
-        coords2.append(rand_num)
-
-    # randomly decides whether coords1 or coords2 represents the horizontal coordinates on the gameboard
-    # "random_ship" will be filled up with coordinates
-    if random.choice((True, False)):
+        # generate a random sequence with length nr of neighbouring numbers between 0 and 10
+        rand_num = random.randrange(0, 10)
         for i in range(length):
-            random_ship.append([coords1[0][i], coords2[i]])
-    else:
-        for i in range(length):
-            random_ship.append([coords2[i], coords1[0][i]])
+            coords2.append(rand_num)
 
+        # randomly decides whether coords1 or coords2 represents the horizontal coordinates on the gameboard
+        # "random_ship" will be filled up with coordinates
+        if random.choice((True, False)):
+            for i in range(length):
+                random_ship.append([coords1[0][i], coords2[i]])
+        else:
+            for i in range(length):
+                random_ship.append([coords2[i], coords1[0][i]])
+        acceptable_ship = [item for item in random_ship if item not in invalid_coords]
+        if len(acceptable_ship) < length:
+            continue
+        elif len(acceptable_ship) == length:
+            break
+
+    # Ship created, update invalid_coords with the new additions
     for i in random_ship:
         invalid_coords.append(i)
 
@@ -175,7 +188,7 @@ def rand_ship_placement(length):
     invalid_coords = list(invalid_coords for invalid_coords, _ in itertools.groupby(invalid_coords))
 
     for coord_pair in random_ship:
-        if player1_turn is True:
+        if whose_turn:
             player1_board[coord_pair[0]][coord_pair[1]] = "S"
         else:
             player2_board[coord_pair[0]][coord_pair[1]] = "S"
@@ -185,19 +198,35 @@ def rand_ship_placement(length):
 
 def AI_pick_shooting_coordinate():
     global coord
+    coord = []
     global first_hit
     global second_hit
-    global acceptable_target_coords
+    global player1_board
+    board_w_hidden_ships = copy.deepcopy(player1_board)
+
+    if first_hit != []:
+        if player1_board[first_hit[0]][first_hit[1]] == "+":
+            first_hit = []
+            second_hit = []
+
+    for row in range(len(board_w_hidden_ships)):
+        for item in range(len(board_w_hidden_ships[row])):
+            if board_w_hidden_ships[row][item] == "S":
+                board_w_hidden_ships[row][item] = "~"
+
     acceptable_target_coords = []  # A list of coordinates for potential next shot
     coords_to_remove_from_acceptable_targets = []
     if first_hit == []:
         # no new ship found, build a list of potential coordinates (all "unshot" coords)
-        for row, item in player1_board:
-            if item == "~":
-                acceptable_target_coords.append([player1_board.index(row), player1_board.index(item)])
+        for row in range(len(board_w_hidden_ships)):
+            for item in range(len(board_w_hidden_ships[row])):
+                if board_w_hidden_ships[row][item] == "~":
+                    acceptable_target_coords.append([row, item])
+                else:
+                    continue
         # pick a coord from the list of viable options, then shoot it.
         coord = random.choice(acceptable_target_coords)
-        shot(coord, player1_turn)
+        shot(coord, False)
         # if the shot is a hit, register it as the starting point for future logical decision.
         if player1_board[coord[0]][coord[1]] == "O":
             first_hit = copy.deepcopy(coord)
@@ -221,7 +250,7 @@ def AI_pick_shooting_coordinate():
         coord = random.choice(acceptable_target_coords)
         shot(coord, player1_turn)
         if player1_board[coord[0]][coord[1]] == "O":
-            second_hit = copy.deepcopy(coord)        
+            second_hit = copy.deepcopy(coord)
 
     elif first_hit != [] and second_hit != []:
         # got 2 hits, now we know along which axis we need to shoot
@@ -231,12 +260,14 @@ def AI_pick_shooting_coordinate():
             # append the list of acceptable targets
             while True:  # start adding eligible coords towards +y
                 #  if the coord is not ~ and we are not at the edge of the board, then keep searching
-                if player1_board[0][first_hit[1] + i] != "~" and (first_hit[1] + i) <= 9:
+                if board_w_hidden_ships[first_hit[0]][first_hit[1] + i] != "~" and (first_hit[1] + i) <= 9:
+                    if board_w_hidden_ships[first_hit[0]][first_hit[1] + i] == "X":
+                        break
                     i += 1
                     continue
                 # when ~ is found, append the coordinate
-                elif player1_board[0][first_hit[1] + i] == "~":
-                    acceptable_target_coords.append(player1_board[0][first_hit[1] + i])
+                elif board_w_hidden_ships[first_hit[0]][first_hit[1] + i] == "~":
+                    acceptable_target_coords.append([first_hit[0], first_hit[1] + i])
                     break
                 # no ~ is found, but we reached the edge of the board, do nothing, search other way
                 else:
@@ -244,12 +275,14 @@ def AI_pick_shooting_coordinate():
             i = 1  # reset the iterator so that we can start again in the other direction
             while True:  # start adding eligible coords towards -y
                 #  if the coord is not ~ and we are not at the edge of the board, then keep searching
-                if player1_board[0][first_hit[1] - i] != "~" and (first_hit[1] - i) >= 0:
+                if board_w_hidden_ships[first_hit[0]][first_hit[1] - i] != "~" and (first_hit[1] - i) >= 0:
+                    if board_w_hidden_ships[first_hit[0]][first_hit[1] - i] == "X":
+                        break
                     i += 1
                     continue
                 # when ~ is found, append the coordinate
-                elif player1_board[0][first_hit[1] - i] == "~":
-                    acceptable_target_coords.append(player1_board[0][first_hit[1]-i])
+                elif board_w_hidden_ships[first_hit[0]][first_hit[1] - i] == "~":
+                    acceptable_target_coords.append([first_hit[0], int(first_hit[1])-i])
                     break
                 # no ~ is found, but we reached the edge of the board, do nothing, search other way
                 else:
@@ -258,31 +291,36 @@ def AI_pick_shooting_coordinate():
             coord = random.choice(acceptable_target_coords)
             shot(coord, player1_turn)
             if player1_board[coord[0]][coord[1]] == "O":
-                second_hit = copy.deepcopy(coord)        
+                second_hit = copy.deepcopy(coord)
 
         elif first_hit[1] == second_hit[1]:  # if the y coords match, that means we need to search along the x axis
             i = 1
             # append the list of acceptable targets
             while True:  # start adding eligible coords towards +x
                 #  if the coord is not ~ and we are not at the edge of the board, then keep searching
-                if player1_board[first_hit[0] + i][1] != "~" and (first_hit[0] + i) <= 9:
+                if board_w_hidden_ships[first_hit[0] + i][first_hit[1]] != "~" and (first_hit[0] + i) <= 9:
+                    if board_w_hidden_ships[first_hit[0] + i][first_hit[1]] == "X":
+                        break
                     i += 1
                     continue
                 # when ~ is found, append the coordinate
-                elif player1_board[first_hit[0] + i][1] == "~":
-                    acceptable_target_coords.append(player1_board[first_hit[0] + i][1])
+                elif board_w_hidden_ships[first_hit[0] + i][first_hit[1]] == "~":
+                    acceptable_target_coords.append([first_hit[0] + i, first_hit[1]])
                     break
                 # no ~ is found, but we reached the edge of the board, do nothing, search other way
                 else:
                     break
+            i = 1
             while True:  # start adding eligible coords towards -x
                 #  if the coord is not ~ and we are not at the edge of the board, then keep searching
-                if player1_board[first_hit[0] - i][1] != "~" and (first_hit[0] - i) >= 0:
+                if board_w_hidden_ships[first_hit[0] - i][first_hit[1]] != "~" and (first_hit[0] - i) >= 0:
+                    if board_w_hidden_ships[first_hit[0] - i][first_hit[1]] == "X":
+                        break
                     i += 1
                     continue
                 # when ~ is found, append the coordinate
-                elif player1_board[first_hit[0] - i][1] == "~":
-                    acceptable_target_coords.append(player1_board[first_hit[0]-i][1])
+                elif board_w_hidden_ships[first_hit[0] - i][first_hit[1]] == "~":
+                    acceptable_target_coords.append([first_hit[0]-i, first_hit[1]])
                     break
                 # no ~ is found, but we reached the edge of the board, do nothing, search other way
                 else:
@@ -291,7 +329,7 @@ def AI_pick_shooting_coordinate():
             coord = random.choice(acceptable_target_coords)
             shot(coord, player1_turn)
             if player1_board[coord[0]][coord[1]] == "O":
-                second_hit = copy.deepcopy(coord)        
+                second_hit = copy.deepcopy(coord)
 
 
 def menu_keys(key):                         # handles user input for starting a new game or quitting
@@ -305,7 +343,7 @@ def input_and_check():      # checks validity of user input
 
     x = ""  # checks if user input is a valid letter
     y = ""
-    valid_char_list = "bacdefghij"
+    valid_char_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
     coord = []
     while True:
         x = input("input x coordinate (A-J): ")
@@ -349,8 +387,8 @@ def show_board(player1_board, player2_board, whose_turn):   # shows the player b
         current_player_board = player2_board
         enemy_player_board = player1_board
 
-    # "clear" the screen and print a header
-    os.system('clear')
+    # "cls" the screen and print a header
+    os.system('cls')
     print(current_player_name + "'s turn")
     print("=================================================", "\n")
     print("   Player's ships             Previous shots")
@@ -380,35 +418,43 @@ def show_board(player1_board, player2_board, whose_turn):   # shows the player b
         # the following seems to be needed to print in the following line... ("\n" skips a line)
 
 
-def shot(whose_turn):
+def shot(shot, whose_turn):
     global player1_board
     global player2_board
-    shot = []
 
-    while True:
-        shot = input_and_check()
+    if single_player is False or (single_player is True and whose_turn is True):
+        while True:
+            shot = input_and_check()
+            shotX = int(shot[0])
+            shotY = int(shot[1])
+
+            if whose_turn and player2_board[shotX][shotY] == "S":
+                player2_board[shotX][shotY] = "O"
+                break
+            elif whose_turn and player2_board[shotX][shotY] == "~":
+                player2_board[shotX][shotY] = "X"
+                break
+            elif whose_turn and player2_board[shotX][shotY] == "X" or player2_board[shotX][shotY] == "O":
+                print("coordinate already shot, choose another one!")
+                continue
+
+            if whose_turn is False and player1_board[shotX][shotY] == "S":
+                player1_board[shotX][shotY] = "O"
+                break
+            elif whose_turn is False and player1_board[shotX][shotY] == "~":
+                player1_board[shotX][shotY] = "X"
+                break
+            elif whose_turn is False and player1_board[shotX][shotY] == "X" or player1_board[shotX][shotY] == "O":
+                print("coordinate already shot, choose another one!")
+                continue
+
+    elif single_player is True and whose_turn is False:
         shotX = int(shot[0])
         shotY = int(shot[1])
-
-        if whose_turn and player2_board[shotX][shotY] == "S":
-            player2_board[shotX][shotY] = "O"
-            break
-        elif whose_turn and player2_board[shotX][shotY] == "~":
-            player2_board[shotX][shotY] = "X"
-            break
-        elif whose_turn and player2_board[shotX][shotY] == "X" or player2_board[shotX][shotY] == "O":
-            print("coordinate already shot, choose another one!")
-            continue
-
-        if whose_turn is False and player1_board[shotX][shotY] == "S":
+        if player1_board[shotX][shotY] == "S":
             player1_board[shotX][shotY] = "O"
-            break
-        elif whose_turn is False and player1_board[shotX][shotY] == "~":
+        elif player1_board[shotX][shotY] == "~":
             player1_board[shotX][shotY] = "X"
-            break
-        elif whose_turn is False and player1_board[shotX][shotY] == "X" or player1_board[shotX][shotY] == "O":
-            print("coordinate already shot, choose another one!")
-            continue
 
 
 def set_ship(length):
@@ -496,9 +542,11 @@ def win_state_check():
                 p2_ships += 1
     if p1_ships == 0:
         print("Game over,", player2_name, "wins!")
+        input("Press ENTER to start a new game...")
         return True
     if p2_ships == 0:
         print("Game over,", player1_name, "wins!")
+        input("Press ENTER to start a new game...")
         return True
     else:
         return False
@@ -516,23 +564,25 @@ def ship_sunk_check(ship_list, whose_ship):  # whose_ship true for p1, false for
             ship_damage += 1
             if ship_damage == len(ship_list):
                 for j in range(0, len(ship_list)):
-                    player1_board[ship_list[j][0]][ship_list[j][1]] = "+"
+                    player2_board[ship_list[j][0]][ship_list[j][1]] = "+"
 
 
 def turn_sequence(single_player):
     global player1_turn
+    is_game_over = False
     if single_player is True:
         while True:
             show_board(player1_board, player2_board, player1_turn)
             if player1_turn is True:
-                shot(player1_turn)
+                shot([], player1_turn)
             else:
                 AI_pick_shooting_coordinate()
             for ship in player1_ship_list:
                 ship_sunk_check(ship, player1_turn)
             for ship in player2_ship_list:
                 ship_sunk_check(ship, player1_turn)
-            if win_state_check() is True:
+            is_game_over = win_state_check()
+            if is_game_over:
                 break
             else:
                 player1_turn = not player1_turn
@@ -558,7 +608,8 @@ def main():
         init()
         turn_sequence(single_player)
 
-main()
+# main()
+print(input_and_check())
 
 '''
         if new_game_switch is True:
