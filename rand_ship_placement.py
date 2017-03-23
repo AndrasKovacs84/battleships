@@ -1,4 +1,5 @@
 import random
+import itertools
 
 # Generates a 3, 4, and 5 square long ships with random position.
 # The generated ships cannot overlap and cannot occupy squares next to
@@ -6,6 +7,8 @@ import random
 
 
 def rand_ship_factory():
+    global invalid_coords
+    invalid_coords = []
     AI_ships = []
     AI_ship3 = []
 
@@ -42,5 +45,24 @@ def rand_ship_factory():
     AI_ships.append(AI_ship3)   #
     print(AI_ships)
     # return AI_ships
+
+    for i in AI_ship3:
+        invalid_coords.append(i)
+    print(invalid_coords)
+
+    for i in AI_ship3:
+        invalid_coords.append([(i[0] - 1), i[1]])
+        invalid_coords.append([(i[0] + 1), i[1]])
+        invalid_coords.append([i[0], (i[1] - 1)])
+        invalid_coords.append([i[0], (i[1] + 1)])
+        invalid_coords.append([(i[0] - 1), (i[1] - 1)])
+        invalid_coords.append([(i[0] + 1), (i[1] + 1)])
+        invalid_coords.append([(i[0] - 1), (i[1] + 1)])
+        invalid_coords.append([(i[0] + 1), (i[1] - 1)])
+
+        # invalid_coords.append([(AI_ship3[0][0] - 1), AI_ship3[0][1]])
+
+    invalid_coords = list(set(invalid_coords))
+    print(invalid_coords)
 
 rand_ship_factory()
