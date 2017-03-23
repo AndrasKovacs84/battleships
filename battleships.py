@@ -8,24 +8,116 @@ print(sys.version)
 
 
 def AI_pick_shooting_coordinate():
-    coord = []
-    first_hit = []
-    second_hit = []
-    acceptable_target_coords = []
+    global coord
+    global first_hit
+    global second_hit
+    global acceptable_target_coords
+    acceptable_target_coords = []  # A list of coordinates for potential next shot
+    coords_to_remove_from_acceptable_targets = []
     if first_hit == []:
-        # if there are no hits yet, then just shoot at a random coordinate.
-        x, y = random.randrange(0, 9)
-        coord.append(x, y)
+        # no new ship found, build a list of potential coordinates (all "unshot" coords)
+        for row, item in player1_board:
+            if item == "~":
+                acceptable_target_coords.append([player1_board.index(row), player1_board.index(item)])
+        # pick a coord from the list of viable options, then shoot it.
+        coord = random.choice(acceptable_target_coords)
+        shot(coord, player1_turn)
+        # if the shot is a hit, register it as the starting point for future logical decision.
+        if player1_board[coord[0]][coord[1]] == "O":
+            first_hit = copy.deepcopy(coord)
 
     elif first_hit != [] and second_hit == []:
         # first hit is not empty, but we have no second_hit yet, pick a coord near first_hit
-        acceptable_target_coords.append(first hit[0]-1, first_hit[1])
-        acceptable_target_coords.append(first hit[0]+1, first_hit[1])
-        acceptable_target_coords.append(first hit[0], first_hit[1]-1)
-        acceptable_target_coords.append(first hit[0], first_hit[1]+1)
-        for x, y in acceptable_target_coords:
-            if x, y < 0 or x, y > 9:
+        # can only consider future coords in the 4 cardinal directions!
+        acceptable_target_coords.append([first_hit[0] + 1, first_hit[1]])
+        acceptable_target_coords.append([first_hit[0] - 1, first_hit[1]])
+        acceptable_target_coords.append([first_hit[0], first_hit[1] - 1])
+        acceptable_target_coords.append([first_hit[0], first_hit[1] + 1])
 
+        #  delete potential coordinates that cannot exist (out of bounds from the board)
+        for coords in acceptable_target_coords:
+            for index in coords:
+                if index < 0 or index > 9:
+                    coords_to_remove_from_acceptable_targets.append(coords)
+        for coords in coords_to_remove_from_acceptable_targets:
+            acceptable_target_coords.remove(coords)
+        # pick a random coordinate from the remaining list of reasonable targets
+        coord = random.choice(acceptable_target_coords)
+        shot(coord, player1_turn)
+        if player1_board[coord[0]][coord[1]] == "O":
+            second_hit = copy.deepcopy(coord)        
+
+    elif first_hit != [] and second_hit != []:
+        # got 2 hits, now we know along which axis we need to shoot
+        # start building the list of acceptable targets
+        if first_hit[0] == second_hit[0]:  # if the x coords match, that means we need to search along the y axis
+            i = 1
+            # append the list of acceptable targets
+            while True:  # start adding eligible coords towards +y
+                #  if the coord is not ~ and we are not at the edge of the board, then keep searching
+                if player1_board[0][first_hit[1] + i] != "~" and (first_hit[1] + i) <= 9:
+                    i += 1
+                    continue
+                # when ~ is found, append the coordinate
+                elif player1_board[0][first_hit[1] + i] == "~":
+                    acceptable_target_coords.append(player1_board[0][first_hit[1] + i])
+                    break
+                # no ~ is found, but we reached the edge of the board, do nothing, search other way
+                else:
+                    break
+            i = 1  # reset the iterator so that we can start again in the other direction
+            while True:  # start adding eligible coords towards -y
+                #  if the coord is not ~ and we are not at the edge of the board, then keep searching
+                if player1_board[0][first_hit[1] - i] != "~" and (first_hit[1] - i) >= 0:
+                    i += 1
+                    continue
+                # when ~ is found, append the coordinate
+                elif player1_board[0][first_hit[1] - i] == "~":
+                    acceptable_target_coords.append(player1_board[0][first_hit[1]-i])
+                    break
+                # no ~ is found, but we reached the edge of the board, do nothing, search other way
+                else:
+                    break
+            # pick a target coordinate from the list of acceptable targets.
+            coord = random.choice(acceptable_target_coords)
+            shot(coord, player1_turn)
+            if player1_board[coord[0]][coord[1]] == "O":
+                second_hit = copy.deepcopy(coord)        
+
+        elif first_hit[1] == second_hit[1]:  # if the y coords match, that means we need to search along the x axis
+            i = 1
+            # append the list of acceptable targets
+            while True:  # start adding eligible coords towards +x
+                #  if the coord is not ~ and we are not at the edge of the board, then keep searching
+                if player1_board[first_hit[0] + i][1] != "~" and (first_hit[0] + i) <= 9:
+                    i += 1
+                    continue
+                # when ~ is found, append the coordinate
+                elif player1_board[first_hit[0] + i][1] == "~":
+                    acceptable_target_coords.append(player1_board[first_hit[0] + i][1])
+                    break
+                # no ~ is found, but we reached the edge of the board, do nothing, search other way
+                else:
+                    break
+            while True:  # start adding eligible coords towards -x
+                #  if the coord is not ~ and we are not at the edge of the board, then keep searching
+                if player1_board[first_hit[0] - i][1] != "~" and (first_hit[0] - i) >= 0:
+                    i += 1
+                    continue
+                # when ~ is found, append the coordinate
+                elif player1_board[first_hit[0] - i][1] == "~":
+                    acceptable_target_coords.append(player1_board[first_hit[0]-i][1])
+                    break
+                # no ~ is found, but we reached the edge of the board, do nothing, search other way
+                else:
+                    break
+            # pick a target coordinate from the list of acceptable targets.
+            coord = random.choice(acceptable_target_coords)
+            shot(coord, player1_turn)
+            if player1_board[coord[0]][coord[1]] == "O":
+                second_hit = copy.deepcopy(coord)        
+
+                    
 
 def menu_keys(key):                         # handles user input for starting a new game or quitting
     if key == "q":
