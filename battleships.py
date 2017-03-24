@@ -8,7 +8,7 @@ import copy
 
 
 def init():
-    os.system('cls')                              # initialize the global variables of the game
+    os.system('clear')                              # initialize the global variables of the game
     global player1_turn
     player1_turn = random.choice((True, False))
     global player1_name
@@ -53,7 +53,7 @@ def init():
               "1 - play against another player", "\n",
               "2 - play against AI")
         chosen_option = input("enter option: ")
-        os.system("cls")
+        os.system("clear")
         if chosen_option == "1":
             single_player = False
             break
@@ -67,13 +67,13 @@ def init():
     if single_player is True:
         player1_name = input("Player 1's name: ")
         # player 1 goes first for ship deployment
-        os.system("cls")
+        os.system("clear")
         print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
               "Choose an option:", "\n",
               "1 - manual ship placement", "\n",
               "2 - random ship placement")
         chosen_option = input("enter option: ")
-        os.system("cls")
+        os.system("clear")
         if chosen_option == "1":  # manual ship placement
             for ship_length in range(3, 6):  # 1 of each length of ships
                 show_board(player1_board, player2_board, True)
@@ -94,13 +94,13 @@ def init():
             if player1_name == "":
                 player1_name = input("Player 1 name: ")
                 # player 1 goes first for ship deployment
-                os.system("cls")
+                os.system("clear")
                 print("SHIP PLACEMENT FOR", player1_name.upper(), "\n",
                       "Choose an option:", "\n",
                       "1 - manual ship placement", "\n",
                       "2 - random ship placement")
                 chosen_option = input("enter option: ")
-                os.system("cls")
+                os.system("clear")
                 if chosen_option == "1":  # manual ship placement
                     for ship_length in range(3, 6):  # 1 of each length of ships
                         show_board(player1_board, player2_board, True)
@@ -113,13 +113,13 @@ def init():
             elif player2_name == "":
                 player2_name = input("Player 2 name: ")
                 # player 1 goes first for ship deployment
-                os.system("cls")
+                os.system("clear")
                 print("SHIP PLACEMENT FOR", player2_name.upper(), "\n",
                       "Choose an option:", "\n",
                       "1 - manual ship placement", "\n",
                       "2 - random ship placement")
                 chosen_option = input("enter option: ")
-                os.system("cls")
+                os.system("clear")
 
                 if chosen_option == "1":  # manual ship placement
                     for ship_length in range(3, 6):  # 1 of each length of ships
@@ -387,8 +387,8 @@ def show_board(player1_board, player2_board, whose_turn):   # shows the player b
         current_player_board = player2_board
         enemy_player_board = player1_board
 
-    # "cls" the screen and print a header
-    os.system('cls')
+    # "clear" the screen and print a header
+    os.system('clear')
     print(current_player_name + "'s turn")
     print("=================================================", "\n")
     print("   Player's ships             Previous shots")
