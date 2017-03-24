@@ -282,7 +282,7 @@ def AI_pick_shooting_coordinate():
                     continue
                 # when ~ is found, append the coordinate
                 elif board_w_hidden_ships[first_hit[0]][first_hit[1] - i] == "~":
-                    acceptable_target_coords.append([first_hit[0], int(first_hit[1])-i])
+                    acceptable_target_coords.append([first_hit[0], first_hit[1]-i])
                     break
                 # no ~ is found, but we reached the edge of the board, do nothing, search other way
                 else:
