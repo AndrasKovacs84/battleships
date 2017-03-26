@@ -9,36 +9,36 @@ import copy
 
 def init():
     os.system('clear')                              # initialize the global variables of the game
-    global player1_turn
+    global player1_turn #
     player1_turn = random.choice((True, False))
-    global player1_name
+    global player1_name #
     player1_name = ""
-    global player2_name
+    global player2_name #
     player2_name = ""
-    global current_event
+    global current_event #
     current_event = ""
-    global new_game_switch
+    global new_game_switch #
     new_game_switch = False
-    global player1_board
+    global player1_board #
     player1_board = []
-    global player2_board
+    global player2_board #
     player2_board = []
     global coord
     coord = []
-    global first_hit
+    global first_hit #
     first_hit = []
-    global second_hit
+    global second_hit #
     second_hit = []
-    global acceptable_target_coords
+    global acceptable_target_coords #
     acceptable_target_coords = []
-    global invalid_coords
+    global invalid_coords # 
     invalid_coords = []
-    global player1_ship_list
+    global player1_ship_list #
     player1_ship_list = []
-    global player2_ship_list
+    global player2_ship_list #
     player2_ship_list = []
     chosen_option = ""
-    global single_player
+    global single_player #
     single_player = True
     for i in range(0, 10):
         player1_board.append(["~"] * 10)    # fill up playerboards with tildes "~"
